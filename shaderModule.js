@@ -27,7 +27,7 @@
 		
 		var type = "fragment-shader";
 		
-		var getScript = function () {
+		function getScript() {
 			return `
 			precision mediump float;
 
@@ -35,7 +35,7 @@
 
 			void main(void) {
 				gl_FragColor = vColor;
-			} `
+			}`
 		};
 		
 		return {
@@ -44,7 +44,6 @@
 				return type;
 			},
 			"getScript": function() {
-				console.log("script_funct_called");
 				return getScript();
 			}
 		};
@@ -60,17 +59,17 @@
 	    function getScript(){
 			return `
 			attribute vec3 aVertexPosition;
-			attribue vec3 aVertexColor;
+			attribute vec4 aVertexColor;
 
 			uniform mat4 uMVMatrix;
 			uniform mat4 uPMatrix;
 
-			varying vColor
+			varying vec4 vColor;
 
 			void main(void) {
 				gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 				vColor = aVertexColor;
-			} `
+			}`
 		};
 		
 		return {
@@ -79,7 +78,6 @@
 				return type;
 			},
 			"getScript": function() {
-				console.log("script_funct_called");
 				return getScript();
 			}
 		};				
@@ -118,26 +116,25 @@ function getShader(gl, id) {
         var shader;
         if (type === "fragment-shader") {
             shader = gl.createShader(gl.FRAGMENT_SHADER);
-			console.log(shader + "");
-			console.log("hello?");
         } else if (type === "vertex-shader") {
             shader = gl.createShader(gl.VERTEX_SHADER);
-			console.log(shader + "");
-			console.log("hello?");
         } else {
 			console.log("it was nulllll");
             return null;
         }
 
         gl.shaderSource(shader, shaderScript);
+		
         gl.compileShader(shader);
 
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            alert(gl.getShaderInfoLog(shader));
+            console.error(gl.getShaderInfoLog(shader));
+			console.log(gl.getShaderParameter(shader, gl.COMPILE_STATUS));
             return null;
         }
-
+		
         return shader;
+		
     }
 
 
