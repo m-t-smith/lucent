@@ -4,8 +4,22 @@
 	<canvas id = "glCanvas" width = "500" height = "500"> </canvas>
 	
 		<pre>
-			<script src= "lucent.js">
+			<script src = "lucent.js"> </script>
+			<script src = "shaderModule.js"> </script>
+			<script src = "glMatrix-0.9.5.min.js"> </script>
+
+			<script type = "text/JavaScript">
+			    var mvMatrix = mat4.create();
+				var pMatrix = mat4.create();
+
+				function setMatrixUniforms() {
+					gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+					gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+				}
+	
 			</script>
+			
+			
 		</pre>
 	</body>
 </html>

@@ -2,15 +2,63 @@
 
 
 // object that holds functions that return shader code
-var shaderCreator = (function() {
+/* var shaderCreator = (function() {
 	
-	//vertex shader 
-	function vShader() {
+	
+	
+	return {
+		"vShader" : {
+			"vGetScript" : function() {
+				getScript();
+			}
+		},
+		"fShader" : {
+			"fGetScript" : function () {
+				getScript();
+			}
+		}
+	};
+		
+		
+}()); */
+
+	//fragment shader 
+	var fShader =  (function () {
+		
+		var type = "fragment-shader";
+		
+		var getScript = function () {
+			return `
+			precision mediump float;
+
+			varying vec4 vColor;
+
+			void main(void) {
+				gl_FragColor = vColor;
+			} `
+		};
+		
+		return {
+			"type": function() {
+				console.log(type);
+				return type;
+			},
+			"getScript": function() {
+				console.log("script_funct_called");
+				return getScript();
+			}
+		};
+		
+		
+	}());	
+
+//vertex shader 
+	var vShader = (function() {
 		
 		var type = "vertex-shader";
 		
-		function getScript(){
-			return `	
+	    function getScript(){
+			return `
 			attribute vec3 aVertexPosition;
 			attribue vec3 aVertexColor;
 
@@ -23,39 +71,38 @@ var shaderCreator = (function() {
 				gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 				vColor = aVertexColor;
 			} `
-		}
+		};
 		
 		return {
-			type: function() {
+			"type": function() {
+				console.log(type);
 				return type;
-			}
-			getScript: function() {
+			},
+			"getScript": function() {
+				console.log("script_funct_called");
 				return getScript();
 			}
 		};				
-	},
-	
-		//fragment shader 
-	fShader: function () {
-		getScript: function () {
-			return `
-			precision mediump float;
-
-			varying vec4 vColor;
-
-			void main(void) {
-				gl_FragColor = vColor;
-			} `
-		},
-		
-		type: "fragment-shader";
-	}
-		
-}());	
+	}());
 
 function getShader(gl, id) {
-        var shaderScript = shaderCreator.vShader;
+		var shaderScript = "";
+		var type = "";
+		try {
+			if (id === vShader.type()){ 
+				shaderScript = vShader.getScript();
+				type = id;
+			} else if (id === fShader.type()){
+				shaderScript = fShader.type();
+				type = id;
+			}
+			
+		} catch (e) {
+			console.error(e);
+		}
+        //var shaderScript = shaderCreator.vShader.getScript();
         if (!shaderScript) {
+			console.log("shader script failed to load");
             return null;
         }
 
@@ -69,15 +116,20 @@ function getShader(gl, id) {
         }
 
         var shader;
-        if (shaderScript.type == "x-shader/x-fragment") {
+        if (type === "fragment-shader") {
             shader = gl.createShader(gl.FRAGMENT_SHADER);
-        } else if (shaderScript.type == "x-shader/x-vertex") {
+			console.log(shader + "");
+			console.log("hello?");
+        } else if (type === "vertex-shader") {
             shader = gl.createShader(gl.VERTEX_SHADER);
+			console.log(shader + "");
+			console.log("hello?");
         } else {
+			console.log("it was nulllll");
             return null;
         }
 
-        gl.shaderSource(shader, str);
+        gl.shaderSource(shader, shaderScript);
         gl.compileShader(shader);
 
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
@@ -92,8 +144,8 @@ function getShader(gl, id) {
     var shaderProgram;
 
     function initShaders() {
-        var fragmentShader = getShader(gl, "shader-fs");
-        var vertexShader = getShader(gl, "shader-vs");
+        var fragmentShader = getShader(gl, "fragment-shader");
+        var vertexShader = getShader(gl, "vertex-shader");
 
         shaderProgram = gl.createProgram();
         gl.attachShader(shaderProgram, vertexShader);
@@ -116,11 +168,5 @@ function getShader(gl, id) {
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     }
 
-
-    var mvMatrix = mat4.create();
-    var pMatrix = mat4.create();
-
-    function setMatrixUniforms() {
-        gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-        gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-    }
+	
+	initShaders();
