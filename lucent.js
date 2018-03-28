@@ -1,6 +1,8 @@
 //Main body of code for lucent 
 
 var gl;
+
+
 function initGL(canvas) {
 	try {
 		gl = canvas.getContext("webgl");
@@ -25,6 +27,6 @@ function webGLStart() {
 
 
 webGLStart();
-console.log("hello, console");
-document.write("hello, page");
+
+//document.write("hello, page");
 

@@ -40,7 +40,6 @@
 		
 		return {
 			"type": function() {
-				console.log(type);
 				return type;
 			},
 			"getScript": function() {
@@ -74,7 +73,6 @@
 		
 		return {
 			"type": function() {
-				console.log(type);
 				return type;
 			},
 			"getScript": function() {
@@ -91,14 +89,14 @@ function getShader(gl, id) {
 				shaderScript = vShader.getScript();
 				type = id;
 			} else if (id === fShader.type()){
-				shaderScript = fShader.type();
+				shaderScript = fShader.getScript();
 				type = id;
 			}
 			
 		} catch (e) {
 			console.error(e);
 		}
-        //var shaderScript = shaderCreator.vShader.getScript();
+
         if (!shaderScript) {
 			console.log("shader script failed to load");
             return null;
@@ -119,17 +117,15 @@ function getShader(gl, id) {
         } else if (type === "vertex-shader") {
             shader = gl.createShader(gl.VERTEX_SHADER);
         } else {
-			console.log("it was nulllll");
+			console.error("shader type not set");
             return null;
         }
-
         gl.shaderSource(shader, shaderScript);
 		
         gl.compileShader(shader);
 
         if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
             console.error(gl.getShaderInfoLog(shader));
-			console.log(gl.getShaderParameter(shader, gl.COMPILE_STATUS));
             return null;
         }
 		
@@ -167,3 +163,4 @@ function getShader(gl, id) {
 
 	
 	initShaders();
+
