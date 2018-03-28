@@ -160,6 +160,7 @@ function getShader(gl, id) {
         shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     }
+	
 
 	
 	initShaders();
