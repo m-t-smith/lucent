@@ -1,7 +1,8 @@
 //Main body of code for lucent 
 
-var gl;
+'use strict';
 
+var gl;
 
 function initGL(canvas) {
 	try {

@@ -1,11 +1,16 @@
  
+ 'use strict';
+ 
  var mvMatrix = mat4.create();
  var pMatrix = mat4.create();
+ var triangleVertexPositionBuffer;
+ var triangleVertexColorBuffer;
 
 function setMatrixUniforms() {
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 	}
+
 
 function initBuffers() {
         triangleVertexPositionBuffer = gl.createBuffer();
