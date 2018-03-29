@@ -1,10 +1,58 @@
  
- 'use strict';
+ "use strict";
  
- var mvMatrix = mat4.create();
- var pMatrix = mat4.create();
- var triangleVertexPositionBuffer;
- var triangleVertexColorBuffer;
+ 
+ 
+ var sceneObjectModule = (function () {
+	 
+	var mvMatrix = mat4.create();
+	var pMatrix = mat4.create();
+	/* var triangleVertexPositionBuffer;
+	var triangleVertexColorBuffer; */
+	
+	var objArray = [];
+	
+	createObject("triangle");
+	
+	function createObject(objClass) {
+		
+		let obj = {};
+		let pBuff = gl.createBuffer();
+		let cBuff = gl.createBuffer();
+		
+		switch (objClass) {
+			
+			case "triangle" :
+			
+			
+				pBuff.itemSize = 3;
+				pBuff.numItems = 3;
+				cBuff.itemSize = 4;
+				cBuff.numItems = 3;
+				
+				let vertices = [
+					0.0,  1.0,  0.0,
+				   -1.0, -1.0,  0.0,
+					1.0, -1.0,  0.0
+				];
+				
+				let colors = [
+					1.0, 0.0, 0.0, 1.0,
+					0.0, 1.0, 0.0, 1.0,
+					0.0, 0.0, 1.0, 1.0
+					];
+					
+				obj.v = vertices;
+				obj.c = colors;
+				obj.pBuff = pBuff;
+				obj.cBuff = cBuff;
+
+				objArray.push(obj);
+				break;
+				
+			default: console.log("createObject doesn't recognize the classification (objClass) of your object");
+		}
+	}
 
 function setMatrixUniforms() {
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
@@ -13,30 +61,21 @@ function setMatrixUniforms() {
 
 
 function initBuffers() {
-        triangleVertexPositionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-        var vertices = [
-             0.0,  1.0,  0.0,
-            -1.0, -1.0,  0.0,
-             1.0, -1.0,  0.0
-        ];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-        triangleVertexPositionBuffer.itemSize = 3;
-        triangleVertexPositionBuffer.numItems = 3;
+		var currObj = objArray[0];
+	
+		gl.bindBuffer(gl.ARRAY_BUFFER, currObj.pBuff);
+       
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.v), gl.STATIC_DRAW);
+    
+		gl.bindBuffer(gl.ARRAY_BUFFER, currObj.cBuff);
 
-        triangleVertexColorBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
-        var colors = [
-            1.0, 0.0, 0.0, 1.0,
-            0.0, 1.0, 0.0, 1.0,
-            0.0, 0.0, 1.0, 1.0
-        ];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-        triangleVertexColorBuffer.itemSize = 4;
-        triangleVertexColorBuffer.numItems = 3;
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.c), gl.STATIC_DRAW);
+       
 }
 
 function drawScene() {
+		let currObj = objArray[0];
+		
         gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -44,18 +83,40 @@ function drawScene() {
 
         mat4.identity(mvMatrix);
 
-        mat4.translate(mvMatrix, [-1.5, 0.0, -7.0]);
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, triangleVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
-        gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, triangleVertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
+        mat4.translate(mvMatrix, [-0.0, 0.0, -9.0]);
+        
+		gl.bindBuffer(gl.ARRAY_BUFFER, currObj.pBuff);
+		
+       
+		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, currObj.pBuff.itemSize, gl.FLOAT, false, 0, 0);
+      
+		gl.bindBuffer(gl.ARRAY_BUFFER, currObj.cBuff);
+       
+		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, currObj.cBuff.itemSize, gl.FLOAT, false, 0, 0);
         setMatrixUniforms();
-        gl.drawArrays(gl.TRIANGLES, 0, triangleVertexPositionBuffer.numItems);
+        
+		gl.drawArrays(gl.TRIANGLES, 0, currObj.pBuff.numItems);
 		
 }
 
-initBuffers();
-drawScene();
+	return {
+		
+		"setMatrixUniforms" : function() {
+			return setMatrixUniforms();
+		},
+		
+		"initBuffers" : function() {
+			return initBuffers();
+		},
+		
+		"drawScene" : function() {
+			return drawScene();
+		}
+		
+	};
+
+ }());
+
+sceneObjectModule.initBuffers();
+sceneObjectModule.drawScene();
 	

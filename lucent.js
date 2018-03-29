@@ -1,6 +1,6 @@
 //Main body of code for lucent 
 
-'use strict';
+"use strict";
 
 var gl;
 

@@ -22,7 +22,7 @@
 		
 }()); */
 	
-	'use strict';
+	"use strict";
 
 	//fragment shader 
 	var fShader =  (function () {
