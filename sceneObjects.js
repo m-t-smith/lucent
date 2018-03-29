@@ -14,44 +14,60 @@
 	
 	createObject("triangle");
 	
-	function createObject(objClass) {
+	function createObject(objClass, options) {
 		
 		let obj = {};
 		let pBuff = gl.createBuffer();
 		let cBuff = gl.createBuffer();
+		let a = {'key' : [0, 1, 2]};
+		console.log(a['key']);
+		console.log([2, 1, 0]);
 		
-		switch (objClass) {
-			
-			case "triangle" :
-			
-			
-				pBuff.itemSize = 3;
-				pBuff.numItems = 3;
-				cBuff.itemSize = 4;
-				cBuff.numItems = 3;
+			switch (objClass) {
 				
-				let vertices = [
-					0.0,  1.0,  0.0,
-				   -1.0, -1.0,  0.0,
-					1.0, -1.0,  0.0
-				];
+				case "triangle" :
 				
-				let colors = [
-					1.0, 0.0, 0.0, 1.0,
-					0.0, 1.0, 0.0, 1.0,
-					0.0, 0.0, 1.0, 1.0
-					];
+					obj.vertSize = 3;
+					obj.numVert = 3;
+					obj.colorSize = 4;
+					obj.numColor = 3;
+					obj.pBuff = pBuff;
+					obj.cBuff = cBuff;
 					
-				obj.v = vertices;
-				obj.c = colors;
-				obj.pBuff = pBuff;
-				obj.cBuff = cBuff;
-
-				objArray.push(obj);
-				break;
-				
-			default: console.log("createObject doesn't recognize the classification (objClass) of your object");
-		}
+					let vertices = [
+						0.0,  1.0,  0.0,
+					   -1.0, -1.0,  0.0,
+						1.0, -1.0,  0.0
+					];
+						
+					obj.v = vertices;
+					
+					if (!options){
+						obj.place = [0.0, 0.0, -7.0];
+						
+						let colors = [
+							1.0, 0.0, 0.0, 1.0,
+							0.0, 1.0, 0.0, 1.0,
+							0.0, 0.0, 1.0, 1.0
+							];
+							
+						obj.c = colors;
+						
+					} else {
+					
+						if (options['place']) {
+							obj.place = options['place'];
+						}	
+						if (options['color']) {
+							obj.c = options['color'];
+						} 
+					}
+					
+					objArray.push(obj);
+					break;
+					
+				default: console.log("createObject doesn't recognize the classification (objClass) of your object");
+			}
 	}
 
 function setMatrixUniforms() {
@@ -83,19 +99,17 @@ function drawScene() {
 
         mat4.identity(mvMatrix);
 
-        mat4.translate(mvMatrix, [-0.0, 0.0, -9.0]);
+        mat4.translate(mvMatrix, currObj.place);
         
 		gl.bindBuffer(gl.ARRAY_BUFFER, currObj.pBuff);
-		
-       
-		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, currObj.pBuff.itemSize, gl.FLOAT, false, 0, 0);
+		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, currObj.vertSize, gl.FLOAT, false, 0, 0);
       
 		gl.bindBuffer(gl.ARRAY_BUFFER, currObj.cBuff);
-       
-		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, currObj.cBuff.itemSize, gl.FLOAT, false, 0, 0);
-        setMatrixUniforms();
+		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, currObj.colorSize, gl.FLOAT, false, 0, 0);
         
-		gl.drawArrays(gl.TRIANGLES, 0, currObj.pBuff.numItems);
+		setMatrixUniforms();
+        
+		gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert);
 		
 }
 
