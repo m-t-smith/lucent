@@ -7,7 +7,7 @@
 <style>
 	div.container {
 		position: fixed;
-		left: 300px;
+		left: 0px;
 		padding: 0;
 		margin: 0;
 	}
@@ -16,9 +16,8 @@
 		float: left;
 	}
 	div.btn-el {
-		position: relative;
-		left: -200px;
 		diplay: inline-block;
+		position: relative;
 		float: left;
 	}
 	div.color-picker {
@@ -51,7 +50,7 @@
 	<body>
 	<div class = "container">
 	<div id = "canvas" class = "canvas-el">
-		<canvas id = "glCanvas" width = "500" height = "500"> </canvas>
+		<canvas id = "glCanvas" width = "800" height = "800"> </canvas>
 	</div>
 		<pre>
 			<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -60,6 +59,7 @@
 			<script src = "lucent.js"> </script>
 			<script src = "shaderModule.js"> </script>
 			<script src = "sceneObjects.js"> </script>
+			<script src = "utility.js"></script>
 			
 			<div id = "app">
 				<color-picker :change = "updateColor" :hue = "hue"></color-picker>
@@ -82,6 +82,7 @@
 			
 			<template id= "shape-adder-template">
 				<div>
+				
 				<v-btn 
 					fab dark small color = "teal"
 					@click.native = "draw"
@@ -95,11 +96,12 @@
 				<option>square</option>
 				<option>circle</option>
 				</select>
+				
 				</div>
 			</template>
 			
 			<script>
-				var sa = Vue.component('shape-adder', {
+				Vue.component('shape-adder', {
 					template: "#shape-adder-template",
 					props: ["hue"],
 					data: function () {
@@ -113,12 +115,8 @@
 							let options = {};
 							options.color = [];
 							let vColor = this.rgba;
+							
 							if (this.selected === "triangle"){
-								/* for(let i = 0; i < 3; i++){
-									for(let j = 0; j < 4; j++){
-										options.color.push(vColor[j]);
-									}
-								} */
 								for (let i = 0; i < 3; i++) {
 									options.color = options.color.concat(vColor);
 								}
@@ -133,7 +131,7 @@
 					},
 					computed: {
 						rgba: function () {
-							let arr = hslToRgb(this.hue/360, 0.8, 0.8);
+							let arr = utilityModule.hslToRgb(this.hue/360, 0.8, 0.8);
 							for(let i = 0; i < arr.length; i++){
 								arr[i] /= 255;
 							}
@@ -143,32 +141,6 @@
 					}
 				})
 
-			function hslToRgb(h, s, l) {
-			  var r, g, b;
-
-			  if (s == 0) {
-				r = g = b = l; 
-			  } else {
-			  
-				function hue2rgb(p, q, t) {
-				  if (t < 0) t += 1;
-				  if (t > 1) t -= 1;
-				  if (t < 1/6) return p + (q - p) * 6 * t;
-				  if (t < 1/2) return q;
-				  if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-				  return p;
-				}
-
-				var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-				var p = 2 * l - q;
-
-				r = hue2rgb(p, q, h + 1/3);
-				g = hue2rgb(p, q, h);
-				b = hue2rgb(p, q, h - 1/3);
-			  }
-
-			  return [ r * 255, g * 255, b * 255 ];
-			}
 
 			</script>
 			
