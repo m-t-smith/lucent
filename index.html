@@ -62,11 +62,9 @@
 			<script src = "sceneObjects.js"> </script>
 			
 			<div id = "app">
-				{{ hue }}
 				<color-picker :change = "updateColor" :hue = "hue"></color-picker>
 				<div id = "app2">
 					<shape-adder v-bind:hue = "hue"></shape-adder>
-					
 				</div>
 			</div>
 			
@@ -115,12 +113,20 @@
 							let options = {};
 							options.color = [];
 							let vColor = this.rgba;
-							for(let i = 0; i < 3; i++){
-								for(let j = 0; j < 4; j++){
-									options.color.push(vColor[j]);
+							if (this.selected === "triangle"){
+								/* for(let i = 0; i < 3; i++){
+									for(let j = 0; j < 4; j++){
+										options.color.push(vColor[j]);
+									}
+								} */
+								for (let i = 0; i < 3; i++) {
+									options.color = options.color.concat(vColor);
+								}
+							} else if (this.selected === "square"){
+								for (let i = 0; i < 4; i++) {
+									options.color = options.color.concat(vColor);
 								}
 							}
-							console.log(options.color);
 							sceneObjectModule.createObject(this.selected, options);
 							sceneObjectModule.drawScene();
 						}
@@ -141,7 +147,7 @@
 			  var r, g, b;
 
 			  if (s == 0) {
-				r = g = b = l; // achromatic
+				r = g = b = l; 
 			  } else {
 			  
 				function hue2rgb(p, q, t) {

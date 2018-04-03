@@ -15,23 +15,24 @@
 		
 		let obj = {};
 		let index;
+		obj.objClass = objClass;
 	
 			switch (objClass) {
 				
 				case "triangle" :
 				
+					
 					obj.vertSize = 3;
 					obj.numVert = 3;
 					obj.colorSize = 4;
 					obj.numColor = 3;
 				
-					let vertices = [
+					obj.v = [
 						0.0,  1.0,  0.0,
 					   -1.0, -1.0,  0.0,
 						1.0, -1.0,  0.0
 					];
 						
-					obj.v = vertices;
 					//check if there are parameters for size and color, if not, use default values
 					if (!options){  
 						console.log("goodbye");
@@ -57,6 +58,53 @@
 							0.0, 1.0, 0.0, 1.0,
 							0.0, 1.0, 0.0, 1.0,
 							0.0, 1.0, 0.0, 1.0
+							];
+						}
+					}
+					
+					objArray.push(obj);
+					index = objArray.length - 1;
+					break;
+					
+				case "square" : 
+					obj.vertSize = 3;
+					obj.numVert = 4;
+					obj.colorSize = 4;
+					obj.numColor = 4;
+					
+					obj.v = [
+						 1.0,  1.0,  0.0,
+						-1.0,  1.0,  0.0,
+						 1.0, -1.0,  0.0,
+						-1.0, -1.0,  0.0
+					];
+					
+					if (!options){  
+						console.log("goodbye");
+						obj.place = [0.0, 0.0, -7.0]; 
+							
+						obj.c = [
+							0.0, 0.0, 1.0, 1.0,
+							0.0, 0.0, 1.0, 1.0,
+							0.0, 0.0, 1.0, 1.0,
+							0.0, 0.0, 1.0, 1.0
+							];
+						
+					} else {
+					
+						if (options.place && options.color) {
+							obj.place = options.place;
+							obj.c = options.color;
+						} else if (options.color) {
+							obj.place = [0.0, 0.0, -7.0];
+							obj.c = options.color;
+						} else if(options.place){
+							obj.place = options.place;
+							obj.c = [
+							0.0, 1.0, 0.0, 1.0,
+							0.0, 1.0, 0.0, 1.0,
+							0.0, 1.0, 0.0, 1.0,
+							0.0, 1.0, 0.0, 1.0	
 							];
 						}
 					}
@@ -116,7 +164,17 @@ function drawScene() {
 			
 			setMatrixUniforms(pMatrix, mvMatrix);
 			
-			gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert);
+			
+			switch (currObj.objClass) {
+				case "triangle" : 
+					gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert);
+					break;
+				case "square" :
+					gl.drawArrays(gl.TRIANGLE_STRIP, 0, currObj.numVert);
+					break;
+				default : 
+					console.log("objectClass not recognized in drawScene");
+			}
 		}
 		
 }
@@ -135,8 +193,8 @@ function drawScene() {
 			return drawScene();
 		},
 		
-		"createObject" : function(arg1, arg2) {
-			return createObject(arg1, arg2);
+		"createObject" : function(objClass, options) {
+			return createObject(objClass, options);
 		}
 		
 	};
