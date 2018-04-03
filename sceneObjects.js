@@ -1,6 +1,6 @@
  
 "use strict";
-
+	
  var sceneObjectModule = (function () {
 	 
 	
@@ -9,10 +9,7 @@
 	objArray.pBuff = gl.createBuffer();
 	objArray.cBuff = gl.createBuffer();
 	
-	for (var i = -2; i < 3; i++) {
-		createObject("triangle", {'place' : [i, 0.0, -10.0]});
-	}
-	
+	//createObject("triangle", { 'color' : 
 	
 	function createObject(objClass, options) {
 		
@@ -34,45 +31,49 @@
 					];
 						
 					obj.v = vertices;
-					
+					console.log(arguments.length);
+					console.log("options: " + options);
+					console.log("not options:" + !options);
+					console.log("options.color" + options.color);
 					//check if there are parameters for size and color, if not, use default values
 					if (!options){  
-						obj.place = [0.0, 0.0, -7.0];
-						
-						let colors = [
-							1.0, 0.0, 0.0, 1.0,
-							0.0, 1.0, 0.0, 1.0,
+						console.log("goodbye");
+						obj.place = [0.0, 0.0, -7.0]; 
+							
+						obj.c = [
+							0.0, 0.0, 1.0, 1.0,
+							0.0, 0.0, 1.0, 1.0,
 							0.0, 0.0, 1.0, 1.0
 							];
-							
-						obj.c = colors;
 						
 					} else {
 					
-						if (options.place) {
+						if (options.place && options.color) {
 							obj.place = options.place;
-						}	
-						if (options.color) {
 							obj.c = options.color;
-							
-						} else {
-							
-							let colors = [
-							1.0, 0.0, 0.0, 1.0,
+						} else if (options.color) {
+							console.log("hello?");
+							obj.place = [0.0, 0.0, -7.0];
+							obj.c = options.color;
+						} else if(options.place){
+							obj.place = options.place;
+							obj.c = [
 							0.0, 1.0, 0.0, 1.0,
-							0.0, 0.0, 1.0, 1.0
+							0.0, 1.0, 0.0, 1.0,
+							0.0, 1.0, 0.0, 1.0
 							];
-							
-							obj.c = colors;
 						}
 					}
 					
 					objArray.push(obj);
 					break;
 					
-				default: console.log("createObject doesn't recognize the classification (objClass) of your object");
+				default: console.log("createObject doesn't recognize input: " + objClass);
 			}
+			
+			initBuffers();
 	}
+
 
 function setMatrixUniforms(pMatrix, mvMatrix) {
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
@@ -98,17 +99,12 @@ function drawScene() {
 		let mvMatrix = mat4.create();
 		let pMatrix = mat4.create();
 	
-	
-	
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 		gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
 
-		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-
-        
+		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);        
 		
 		for (let i = 0; i < objArray.length; i++){
-			
 			
 			let currObj = objArray[i];
 			
@@ -140,12 +136,18 @@ function drawScene() {
 		
 		"drawScene" : function() {
 			return drawScene();
+		},
+		
+		"createObject" : function(args) {
+			return createObject(args);
 		}
 		
 	};
 
  }());
 
-sceneObjectModule.initBuffers();
-sceneObjectModule.drawScene();
+var options = {};
+	options.color = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1];
 	
+	sceneObjectModule.createObject("triangle", {'color' : options.color});
+	sceneObjectModule.drawScene();

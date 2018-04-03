@@ -1,15 +1,175 @@
 <html>
+<head>
+<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+<link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
+<style>
+	div.container {
+		position: fixed;
+		left: 300px;
+		padding: 0;
+		margin: 0;
+	}
+	div.canvas-el {
+		display: inline-block;
+		float: left;
+	}
+	div.btn-el {
+		position: relative;
+		left: -200px;
+		diplay: inline-block;
+		float: left;
+	}
+	div.color-picker {
+		display: inline-block;
+		position: relative;
+		float: left
+	}
+	div.control {
+		display: inline-block;
+		float: left;
+		width: 100%;
+		height: 12px;
+		border-radius: 12px;
+		border: 1px solid #ddd;
+	}
+	div.swatch {
+	  width: 24px;
+	  height: 24px;
+	  margin: 1rem auto 0 auto;
+	  border: 4px solid white;
+	  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+	  cursor: pointer;
+	}
+	div..color-picker__inner {
+		padding: 1.5rem 1rem;
+	}
+
+</style>		
+  </head>
 	<body>
-	
-	<canvas id = "glCanvas" width = "500" height = "500"> </canvas>
-	
+	<div class = "container">
+	<div id = "canvas" class = "canvas-el">
+		<canvas id = "glCanvas" width = "500" height = "500"> </canvas>
+	</div>
 		<pre>
+			<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+			<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
 			<script src = "glMatrix-0.9.5.min.js"> </script>
 			<script src = "lucent.js"> </script>
 			<script src = "shaderModule.js"> </script>
 			<script src = "sceneObjects.js"> </script>
 			
+			<div id = "app">
+				{{ hue }}
+				<color-picker :change = "updateColor" :hue = "hue"></color-picker>
+				<div id = "app2">
+					<shape-adder v-bind:hue = "hue"></shape-adder>
+					
+				</div>
+			</div>
+			
+			<template id= "color-picker-template">
+				<div class = "color-picker">
+					<div class="color-picker__inner">
+						<div class = "control" v-bind:style = "gradientH">
+							<input type = "range" min = "0" max = "360" v-model = "h"> </input>
+						</div>
+					</div>
+					<div class = "swatch" v-bind:style= "{'background': color}" v-on:click = "toggle">
+					</div>
+				</div>
+			</template>
+			
+			<template id= "shape-adder-template">
+				<div>
+				<v-btn 
+					fab dark small color = "teal"
+					@click.native = "draw"
+				>
+					<v-icon dark>add</v-icon>
+				</v-btn>
+				
+				<select v-model="selected">
+				<option disabled value="">Shapes</option>
+				<option>triangle</option>
+				<option>square</option>
+				<option>circle</option>
+				</select>
+				</div>
+			</template>
+			
+			<script>
+				var sa = Vue.component('shape-adder', {
+					template: "#shape-adder-template",
+					props: ["hue"],
+					data: function () {
+						return {
+							message: "Add a shape",
+							selected: '',
+						}
+					},
+					methods: {
+						draw: function (event) {
+							console.log("notice me senpai");
+							let options = {};
+							options.color = [];
+							let vColor = this.rgba;
+							for(let i = 0; i < 3; i++){
+								for(let j = 0; j < 4; j++){
+									options.color.push(vColor[j]);
+								}
+							}
+							console.log(options.color);
+							sceneObjectModule.createObject(this.selected, options.color);
+							sceneObjectModule.drawScene();
+						}
+					},
+					computed: {
+						rgba: function () {
+							let arr = hslToRgb(this.hue*1, 0.8, 0.8);
+							for(let i = 0; i < arr.length; i++){
+								arr[i] /= 255;
+							}
+							arr.push(1.0);
+							return arr;
+						}
+					}
+				})
 
+			function hslToRgb(h, s, l) {
+			  var r, g, b;
+
+			  if (s == 0) {
+				r = g = b = l; // achromatic
+			  } else {
+				function hue2rgb(p, q, t) {
+				  if (t < 0) t += 1;
+				  if (t > 1) t -= 1;
+				  if (t < 1/6) return p + (q - p) * 6 * t;
+				  if (t < 1/2) return q;
+				  if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+				  return p;
+				}
+
+				var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+				var p = 2 * l - q;
+
+				r = hue2rgb(p, q, h + 1/3);
+				g = hue2rgb(p, q, h);
+				b = hue2rgb(p, q, h - 1/3);
+			  }
+
+			  return [ r * 255, g * 255, b * 255 ];
+			}
+
+			</script>
+			
+			<script src = "color-picker.js"> </script>
+			
+			
+	</div>
 			
 			
 		</pre>
