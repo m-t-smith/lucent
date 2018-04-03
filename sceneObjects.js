@@ -14,6 +14,7 @@
 	function createObject(objClass, options) {
 		
 		let obj = {};
+		let index;
 	
 			switch (objClass) {
 				
@@ -31,10 +32,6 @@
 					];
 						
 					obj.v = vertices;
-					console.log(arguments.length);
-					console.log("options: " + options);
-					console.log("not options:" + !options);
-					console.log("options.color" + options.color);
 					//check if there are parameters for size and color, if not, use default values
 					if (!options){  
 						console.log("goodbye");
@@ -52,7 +49,6 @@
 							obj.place = options.place;
 							obj.c = options.color;
 						} else if (options.color) {
-							console.log("hello?");
 							obj.place = [0.0, 0.0, -7.0];
 							obj.c = options.color;
 						} else if(options.place){
@@ -66,12 +62,13 @@
 					}
 					
 					objArray.push(obj);
+					index = objArray.length - 1;
 					break;
 					
 				default: console.log("createObject doesn't recognize input: " + objClass);
 			}
 			
-			initBuffers();
+			initBuffers(index);
 	}
 
 
@@ -81,9 +78,9 @@ function setMatrixUniforms(pMatrix, mvMatrix) {
 	}
 
 
-function initBuffers() {
+function initBuffers(index) {
 	
-	let currObj = objArray[0];
+	let currObj = objArray[index];
 	gl.bindBuffer(gl.ARRAY_BUFFER, objArray.pBuff);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.v), gl.STATIC_DRAW);
 		
@@ -138,16 +135,11 @@ function drawScene() {
 			return drawScene();
 		},
 		
-		"createObject" : function(args) {
-			return createObject(args);
+		"createObject" : function(arg1, arg2) {
+			return createObject(arg1, arg2);
 		}
 		
 	};
 
  }());
 
-var options = {};
-	options.color = [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1];
-	
-	sceneObjectModule.createObject("triangle", {'color' : options.color});
-	sceneObjectModule.drawScene();

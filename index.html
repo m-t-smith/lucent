@@ -112,7 +112,6 @@
 					},
 					methods: {
 						draw: function (event) {
-							console.log("notice me senpai");
 							let options = {};
 							options.color = [];
 							let vColor = this.rgba;
@@ -122,13 +121,13 @@
 								}
 							}
 							console.log(options.color);
-							sceneObjectModule.createObject(this.selected, options.color);
+							sceneObjectModule.createObject(this.selected, options);
 							sceneObjectModule.drawScene();
 						}
 					},
 					computed: {
 						rgba: function () {
-							let arr = hslToRgb(this.hue*1, 0.8, 0.8);
+							let arr = hslToRgb(this.hue/360, 0.8, 0.8);
 							for(let i = 0; i < arr.length; i++){
 								arr[i] /= 255;
 							}
@@ -144,6 +143,7 @@
 			  if (s == 0) {
 				r = g = b = l; // achromatic
 			  } else {
+			  
 				function hue2rgb(p, q, t) {
 				  if (t < 0) t += 1;
 				  if (t > 1) t -= 1;
