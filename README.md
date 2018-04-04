@@ -1,2 +1,8 @@
-# lucent
-webGL based graphic design development environment
+
+
+
+# Team-GRAPID
+
+a webGL graphics development environment with vue.js 
+
+
