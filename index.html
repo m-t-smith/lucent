@@ -48,108 +48,101 @@
 </style>		
   </head>
 	<body>
-	<div class = "container">
-	<div id = "canvas" class = "canvas-el">
-		<canvas id = "glCanvas" width = "800" height = "800"> </canvas>
-	</div>
-		<pre>
-			<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-			<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
-			<script src = "glMatrix-0.9.5.min.js"> </script>
-			<script src = "lucent.js"> </script>
-			<script src = "shaderModule.js"> </script>
-			<script src = "sceneObjects.js"> </script>
-			<script src = "utility.js"></script>
-			
-			<div id = "app">
-				<color-picker :change = "updateColor" :hue = "hue"></color-picker>
-				<div id = "app2">
-					<shape-adder v-bind:hue = "hue"></shape-adder>
-				</div>
+		<div class = "container">
+			<div id = "canvas" class = "canvas-el">
+				<canvas id = "glCanvas" width = "800" height = "800"> </canvas>
 			</div>
-			
-			<template id= "color-picker-template">
-				<div class = "color-picker">
-					<div class="color-picker__inner">
-						<div class = "control" v-bind:style = "gradientH">
-							<input type = "range" min = "0" max = "360" v-model = "h"> </input>
+			<pre>
+				<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+				<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+				<script src = "glMatrix-0.9.5.min.js"> </script>
+				<script src = "lucent.js"> </script>
+				<script src = "shaderModule.js"> </script>
+				<script src = "sceneObjects.js"> </script>
+				<script src = "utility.js"></script>
+				
+				<div id = "app">
+					<color-picker :change = "updateColor" :hue = "hue"></color-picker>
+					<div id = "app2">
+						<shape-adder v-bind:hue = "hue"></shape-adder>
+					</div>
+				</div>
+				
+				<template id= "color-picker-template">
+					<div class = "color-picker">
+						<div class="color-picker__inner">
+							<div class = "control" v-bind:style = "gradientH">
+								<input type = "range" min = "0" max = "360" v-model = "h"> </input>
+							</div>
+						</div>
+						<div class = "swatch" v-bind:style= "{'background': color}" v-on:click = "toggle">
 						</div>
 					</div>
-					<div class = "swatch" v-bind:style= "{'background': color}" v-on:click = "toggle">
+				</template>
+				
+				<template id= "shape-adder-template">
+					<div>
+					
+					<v-btn 
+						fab dark small color = "teal"
+						@click.native = "draw"
+					>
+						<v-icon dark>add</v-icon>
+					</v-btn>
+					
+					<select v-model="selected">
+					<option disabled value="">Shapes</option>
+					<option>triangle</option>
+					<option>square</option>
+					<option>circle</option>
+					</select>
+					
 					</div>
-				</div>
-			</template>
-			
-			<template id= "shape-adder-template">
-				<div>
+				</template>
 				
-				<v-btn 
-					fab dark small color = "teal"
-					@click.native = "draw"
-				>
-					<v-icon dark>add</v-icon>
-				</v-btn>
-				
-				<select v-model="selected">
-				<option disabled value="">Shapes</option>
-				<option>triangle</option>
-				<option>square</option>
-				<option>circle</option>
-				</select>
-				
-				</div>
-			</template>
-			
-			<script>
-				Vue.component('shape-adder', {
-					template: "#shape-adder-template",
-					props: ["hue"],
-					data: function () {
-						return {
-							message: "Add a shape",
-							selected: '',
-						}
-					},
-					methods: {
-						draw: function (event) {
-							let options = {};
-							options.color = [];
-							let vColor = this.rgba;
-							
-							if (this.selected === "triangle"){
-								for (let i = 0; i < 3; i++) {
-									options.color = options.color.concat(vColor);
-								}
-							} else if (this.selected === "square"){
-								for (let i = 0; i < 4; i++) {
-									options.color = options.color.concat(vColor);
-								}
+				<script>
+					Vue.component('shape-adder', {
+						template: "#shape-adder-template",
+						props: ["hue"],
+						data: function () {
+							return {
+								message: "Add a shape",
+								selected: '',
 							}
-							sceneObjectModule.createObject(this.selected, options);
-							sceneObjectModule.drawScene();
-						}
-					},
-					computed: {
-						rgba: function () {
-							let arr = utilityModule.hslToRgb(this.hue/360, 0.8, 0.8);
-							for(let i = 0; i < arr.length; i++){
-								arr[i] /= 255;
+						},
+						methods: {
+							draw: function (event) {
+								let options = {};
+								options.color = [];
+								let vColor = this.rgba;
+								
+								if (this.selected === "triangle"){
+									for (let i = 0; i < 3; i++) {
+										options.color = options.color.concat(vColor);
+									}
+								} else if (this.selected === "square"){
+									for (let i = 0; i < 4; i++) {
+										options.color = options.color.concat(vColor);
+									}
+								}
+								sceneObjectModule.createObject(this.selected, options);
+								sceneObjectModule.drawScene();
 							}
-							arr.push(1.0);
-							return arr;
+						},
+						computed: {
+							rgba: function () {
+								let arr = utilityModule.hslToRgb(this.hue/360, 0.8, 0.8);
+								for(let i = 0; i < arr.length; i++){
+									arr[i] /= 255;
+								}
+								arr.push(1.0);
+								return arr;
+							}
 						}
-					}
-				})
-
-
-			</script>
-			
-			<script src = "color-picker.js"> </script>
-			
-			
-	</div>
-			
-			
-		</pre>
+					})
+				</script>
+				<script src = "color-picker.js"> </script>
+			</pre>		
+		</div>
 	</body>
 </html>
