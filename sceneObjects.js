@@ -6,20 +6,35 @@
 	
 	var objArray = [];
 	
-	objArray.pBuff = gl.createBuffer();
-	objArray.cBuff = gl.createBuffer();
+	objArray.activeClasses = {};
 	
-	//createObject("triangle", { 'color' : 
+	function createBuffers(obj) {
+		var buffer_name;
+		if(!objArray.activeClasses[obj.objClass]){
+			let property_names = Object.keys(obj.properties);
+			for(let i = 0; i < property_names.length; i++){
+				buffer_name = obj.objClass + "_" + property_names[i] + "_buffer";
+				objArray[buffer_name] = gl.createBuffer();
+			}
+			
+		}
+		objArray.activeClasses[obj.objClass] = obj.objClass;
+	}
 	
 	function createObject(objClass, options) {
 		
 		let obj = {};
-		let index;
 		obj.objClass = objClass;
+		obj.properties = {
+			"position" : [],
+			"color" : []
+		};
+		
+		createBuffers(obj);
 	
 			switch (objClass) {
 				
-				case "triangle" :
+				case "triangle" : {
 				
 					
 					obj.vertSize = 3;
@@ -27,7 +42,7 @@
 					obj.colorSize = 4;
 					obj.numColor = 3;
 				
-					obj.v = [
+					obj.properties.position = [
 						0.0,  1.0,  0.0,
 					   -1.0, -1.0,  0.0,
 						1.0, -1.0,  0.0
@@ -35,10 +50,10 @@
 						
 					//check if there are parameters for size and color, if not, use default values
 					if (!options){  
-						console.log("goodbye");
+				
 						obj.place = [0.0, 0.0, -7.0]; 
 							
-						obj.c = [
+						obj.properties.color = [
 							0.0, 0.0, 1.0, 1.0,
 							0.0, 0.0, 1.0, 1.0,
 							0.0, 0.0, 1.0, 1.0
@@ -48,13 +63,13 @@
 					
 						if (options.place && options.color) {
 							obj.place = options.place;
-							obj.c = options.color;
+							obj.properties.color = options.color;
 						} else if (options.color) {
 							obj.place = [0.0, 0.0, -7.0];
-							obj.c = options.color;
+							obj.properties.color = options.color;
 						} else if(options.place){
 							obj.place = options.place;
-							obj.c = [
+							obj.properties.color = [
 							0.0, 1.0, 0.0, 1.0,
 							0.0, 1.0, 0.0, 1.0,
 							0.0, 1.0, 0.0, 1.0
@@ -63,16 +78,19 @@
 					}
 					
 					objArray.push(obj);
-					index = objArray.length - 1;
+					let index = objArray.length - 1;
+					initBuffers(index);
 					break;
 					
-				case "square" : 
+				}
+					
+				case "square" : {
 					obj.vertSize = 3;
 					obj.numVert = 4;
 					obj.colorSize = 4;
 					obj.numColor = 4;
 					
-					obj.v = [
+					obj.properties.position = [
 						 1.0,  1.0,  0.0,
 						-1.0,  1.0,  0.0,
 						 1.0, -1.0,  0.0,
@@ -80,10 +98,10 @@
 					];
 					
 					if (!options){  
-						console.log("goodbye");
+	
 						obj.place = [0.0, 0.0, -7.0]; 
 							
-						obj.c = [
+						obj.properties.color = [
 							0.0, 0.0, 1.0, 1.0,
 							0.0, 0.0, 1.0, 1.0,
 							0.0, 0.0, 1.0, 1.0,
@@ -94,13 +112,13 @@
 					
 						if (options.place && options.color) {
 							obj.place = options.place;
-							obj.c = options.color;
+							obj.properties.color = options.color;
 						} else if (options.color) {
 							obj.place = [0.0, 0.0, -7.0];
-							obj.c = options.color;
+							obj.properties.color = options.color;
 						} else if(options.place){
 							obj.place = options.place;
-							obj.c = [
+							obj.properties.color = [
 							0.0, 1.0, 0.0, 1.0,
 							0.0, 1.0, 0.0, 1.0,
 							0.0, 1.0, 0.0, 1.0,
@@ -110,13 +128,14 @@
 					}
 					
 					objArray.push(obj);
-					index = objArray.length - 1;
+					let index = objArray.length - 1;
+					initBuffers(index);
 					break;
-					
+				}	
+				
 				default: console.log("createObject doesn't recognize input: " + objClass);
+				
 			}
-			
-			initBuffers(index);
 	}
 
 
@@ -129,13 +148,13 @@ function setMatrixUniforms(pMatrix, mvMatrix) {
 function initBuffers(index) {
 	
 	let currObj = objArray[index];
-	gl.bindBuffer(gl.ARRAY_BUFFER, objArray.pBuff);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.v), gl.STATIC_DRAW);
-		
-	gl.bindBuffer(gl.ARRAY_BUFFER, objArray.cBuff);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.c), gl.STATIC_DRAW);
-	//Need to develope some way to check whether objects are different
-	//which will effect the buffers we need to use
+	let bufferRef = currObj.objClass + "_position_buffer";
+	gl.bindBuffer(gl.ARRAY_BUFFER, objArray[bufferRef]);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.properties.position), gl.STATIC_DRAW);
+	
+	bufferRef = currObj.objClass + "_color_buffer";
+	gl.bindBuffer(gl.ARRAY_BUFFER, objArray[bufferRef]);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.properties.color), gl.STATIC_DRAW);
 
 }
 
@@ -156,20 +175,24 @@ function drawScene() {
 			mat4.identity(mvMatrix);
 			mat4.translate(mvMatrix, currObj.place);
 			
-			gl.bindBuffer(gl.ARRAY_BUFFER, objArray.pBuff);
+			let bufferRef = currObj.objClass + "_position_buffer";
+			
+			gl.bindBuffer(gl.ARRAY_BUFFER, objArray[bufferRef]);
 			gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, currObj.vertSize, gl.FLOAT, false, 0, 0);
 		  
-			gl.bindBuffer(gl.ARRAY_BUFFER, objArray.cBuff);
+			bufferRef = currObj.objClass + "_color_buffer";
+		  
+			gl.bindBuffer(gl.ARRAY_BUFFER, objArray[bufferRef]);
 			gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, currObj.colorSize, gl.FLOAT, false, 0, 0);
 			
 			setMatrixUniforms(pMatrix, mvMatrix);
-			
-			
+		
 			switch (currObj.objClass) {
 				case "triangle" : 
-					gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert);
+					gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert); 
 					break;
 				case "square" :
+			
 					gl.drawArrays(gl.TRIANGLE_STRIP, 0, currObj.numVert);
 					break;
 				default : 
