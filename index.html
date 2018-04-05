@@ -61,11 +61,14 @@
 			<script src = "sceneObjects.js"> </script>
 			<script src = "utility.js"></script>
 			
+			
 			<div id = "app">
 				<color-picker :change = "updateColor" :hue = "hue"></color-picker>
 				<div id = "app2">
 					<shape-adder v-bind:hue = "hue"></shape-adder>
+						
 				</div>
+					<canvas-view> </canvas-view>
 			</div>
 			
 			<template id= "color-picker-template">
@@ -77,6 +80,12 @@
 					</div>
 					<div class = "swatch" v-bind:style= "{'background': color}" v-on:click = "toggle">
 					</div>
+				</div>
+			</template>
+			
+			<template id = "canvas-view-template">
+				<div class = "btn-el">
+					<button type = "button">Burton</button>
 				</div>
 			</template>
 			
@@ -143,6 +152,7 @@
 
 
 			</script>
+			<script src = "canvasView.js"></script>
 			
 			<script src = "color-picker.js"> </script>
 			
