@@ -89,21 +89,19 @@
 				
 				<template id= "shape-adder-template">
 					<div>
-					
-					<v-btn 
-						fab dark small color = "teal"
-						@click.native = "draw"
-					>
-						<v-icon dark>add</v-icon>
-					</v-btn>
-					
-					<select v-model="selected">
-					<option disabled value="">Shapes</option>
-					<option>triangle</option>
-					<option>square</option>
-					<option>circle</option>
-					</select>
-					
+						<v-btn 
+							fab dark small color = "teal"
+							@click.native = "draw"
+						>
+							<v-icon dark>add</v-icon>
+						</v-btn>
+						
+						<select v-model="selected">
+						<option disabled value="">Shapes</option>
+						<option>triangle</option>
+						<option>square</option>
+						<option>circle</option>
+						</select>
 					</div>
 				</template>
 				
