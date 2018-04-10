@@ -1,80 +1,89 @@
+<!-- Declare document type to be html5 -->
+<!DOCTYPE html>
 <html>
-<head>
-<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
-<link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+	<head>
+	<!-- Import vue.js and vuetify.js resources for dynamic view components and pretty buttons  -->
+		<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+		<link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
 
-<style>
-	div.container {
-		position: fixed;
-		left: 0px;
-		padding: 0;
-		margin: 0;
-	}
-	div.canvas-el {
-		display: inline-block;
-		float: left;
-	}
-	div.btn-el {
-		diplay: inline-block;
-		position: relative;
-		float: left;
-	}
-	div.color-picker {
-		display: inline-block;
-		position: relative;
-		float: left
-	}
-	div.control {
-		display: inline-block;
-		float: left;
-		width: 100%;
-		height: 12px;
-		border-radius: 12px;
-		border: 1px solid #ddd;
-	}
-	div.swatch {
-	  width: 24px;
-	  height: 24px;
-	  margin: 1rem auto 0 auto;
-	  border: 4px solid white;
-	  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
-	  cursor: pointer;
-	}
-	div..color-picker__inner {
-		padding: 1.5rem 1rem;
-	}
+<!-- Everything between the style tags is CSS defining the layout of the page
+based on the class attribute of the DOM element div tags below-->
 
-</style>		
+		<style>
+			div.container {
+				position: fixed;
+				left: 0px;
+				padding: 0;
+				margin: 0;
+			}
+			div.canvas-el {
+				display: inline-block;
+				float: left;
+			}
+			div.btn-el {
+				diplay: inline-block;
+				position: relative;
+				float: left;
+			}
+			div.color-picker {
+				display: inline-block;
+				position: relative;
+				float: left
+			}
+			div.control {
+				display: inline-block;
+				float: left;
+				width: 100%;
+				height: 12px;
+				border-radius: 12px;
+				border: 1px solid #ddd;
+			}
+			div.swatch {
+				width: 24px;
+				height: 24px;
+				margin: 1rem auto 0 auto;
+				border: 4px solid white;
+				box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.3);
+				cursor: pointer;
+			}
+			div..color-picker__inner {
+				padding: 1.5rem 1rem;
+			}
+
+		</style>		
   </head>
+	<!-- The body of an html file is where you set up all of the DOM elements we 
+	want in the webpage (e.g. an html5 canvas, buttons, custom vue components, etc.) -->
 	<body>
+	<!-- Div means division or section, think of div tags as labels on a building block 
+	(the blocks being our DOM elements) so first we create a division called container 
+	to hold all of our page elements -->
 		<div class = "container">
-			<div id = "canvas" class = "canvas-el">
-				<canvas id = "glCanvas" width = "800" height = "800"> </canvas>
-
-			</div>
-			<pre>
-				<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-				<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
-				<script src = "glMatrix-0.9.5.min.js"> </script>
-				<script src = "lucent.js"> </script>
-				<script src = "shaderModule.js"> </script>
-				<script src = "sceneObjects.js"> </script>
-				<script src = "utility.js"></script>
-				
-				<div id = "app">
+				<!-- then we create a division with an id attribute = 'grapid-app', we use this id to link 
+				the elements in this section with the vue instance defined in canvasView.js -->
+				<div id = "grapid-app">
+				<!-- we initialize a custom vue instance, canvas-view, based on the vue 
+				component constructor defined in canvasView.js -->
+					<canvas-view></canvas-view>
+					<!-- we do the same for the color-picker and shape-adder components -->
 					<color-picker :change = "updateColor" :hue = "hue"></color-picker>
-					<div id = "app2">
-						<shape-adder v-bind:hue = "hue"></shape-adder>
-					</div>
+					<shape-adder v-bind:hue = "hue"></shape-adder>
+					
 				</div>
-
+				<!-- Vue components are made up of DOM elements, data, and functions; 
+				the html templates below describe the DOM elements that we include 
+				in a each component (e.g. the canvas-view component has a canvas element)  -->
 				<template id = "canvas-view-template">
-					<div class = "btn-el">
-						<button type = "button">Burton</button>
+					<div class = "canvas-el">
+						<canvas ref = "grapid-canvas"></canvas>
 					</div>
 				</template>
 				
+				<!-- credit to Florian Schulz for this color-picker template, 
+				see color-picker.js for link to his code -->
 				<template id= "color-picker-template">
 					<div class = "color-picker">
 						<div class="color-picker__inner">
@@ -89,6 +98,10 @@
 				
 				<template id= "shape-adder-template">
 					<div>
+					<!-- v-btn is a stylized button courtesy of vuetify.js;
+							in the element tag we set the color attribute to teal 
+							and bind the behavior on click events to the function 
+							"draw" defined in the shape-adder component constructor-->
 						<v-btn 
 							fab dark small color = "teal"
 							@click.native = "draw"
@@ -105,51 +118,16 @@
 					</div>
 				</template>
 				
-				<script>
-					Vue.component('shape-adder', {
-						template: "#shape-adder-template",
-						props: ["hue"],
-						data: function () {
-							return {
-								message: "Add a shape",
-								selected: '',
-							}
-						},
-						methods: {
-							draw: function (event) {
-								let options = {};
-								options.color = [];
-								let vColor = this.rgba;
-								
-								if (this.selected === "triangle"){
-									for (let i = 0; i < 3; i++) {
-										options.color = options.color.concat(vColor);
-									}
-								} else if (this.selected === "square"){
-									for (let i = 0; i < 4; i++) {
-										options.color = options.color.concat(vColor);
-									}
-								}
-								sceneObjectModule.createObject(this.selected, options);
-								sceneObjectModule.drawScene();
-							}
-						},
-						computed: {
-							rgba: function () {
-								let arr = utilityModule.hslToRgb(this.hue/360, 0.8, 0.8);
-								for(let i = 0; i < arr.length; i++){
-									arr[i] /= 255;
-								}
-								arr.push(1.0);
-								return arr;
-							}
-						}
-					})
-
-				</script>
-				<script src = "canvasView.js"></script>
-				<script src = "color-picker.js"> </script>
-			</pre>		
 		</div>
+		 <!-- We may at some point look into using Require.js or something to asynchonously load scripts while maintaining  -->
+		 <!-- the dependency chain at runtime but for now I'm just including them with script tags in the necessary order -->
+			<script src = "shapeAdder.js"></script>
+			<script src = "glMatrix-0.9.5.min.js"> </script>
+			<script src = "lucent.js"> </script>
+			<script src = "utility.js"></script>
+			<script src = "shaderModule.js"> </script>
+			<script src = "color-picker.js"> </script>	
+			<script src = "canvasView.js"></script>
+			<script src = "sceneObjects.js"> </script>
 	</body>
 </html>

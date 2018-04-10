@@ -25,10 +25,31 @@ Vue.component("canvas-view", {
 			},
 			toggle: function() {
 				this.isVisible = !this.isVisible;
+			},
+			resize: function(){
+				let canvas = this.$refs['grapid-canvas'];
+				canvas.width = this.width;
+				canvas.height = this.height;
 			}
 		},
 		
 		mounted: function() {
-			this.message = "I am a canvas";
+			this.resize();
+			init.startWebGL(this.$refs['grapid-canvas']);
+			initShaders();
 		}
 })
+
+	var grapidApp = new Vue({
+		el: "#grapid-app",
+		data: {
+			color: "",
+			hue : 200
+		},
+		methods: {
+			updateColor: function(event) {
+				this.color = event.color
+				this.hue = event.hue
+			}
+		}
+	})

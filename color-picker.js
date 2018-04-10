@@ -1,4 +1,6 @@
-//object color input view component
+// color input vue component modified (simplified) from 
+// work by Florian Schulz (@getflourish)
+// https://codepen.io/getflourish/pen/NbxByK
 
 Vue.component("color-picker", {
 	template: "#color-picker-template",
@@ -46,17 +48,3 @@ Vue.component("color-picker", {
 			this.h = parseInt(Math.random() * 360)
 		}
 })
-	
-	var app = new Vue({
-		el: "#app",
-		data: {
-			color: "",
-			hue : 200
-		},
-		methods: {
-			updateColor: function(event) {
-				this.color = event.color
-				this.hue = event.hue
-			}
-		}
-	})

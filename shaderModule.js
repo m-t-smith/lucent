@@ -133,5 +133,5 @@ function getShader(gl, id) {
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     }
 	
-	initShaders();
+	
 
