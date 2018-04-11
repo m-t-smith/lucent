@@ -51,31 +51,33 @@ Vue.component("canvas-view", {
 				return {'x': x,
 								'y': y	
 							}
+			},
+			resize: function(){
+				let canvas = this.$refs['grapid-canvas'];
+				canvas.width = this.width;
+				canvas.height = this.height;
 			}
 		},
 		
-		mounted: function() {
-			let canvas = this.$refs.lucentCanvas;
-			webGLStart(canvas);
-			this.provider.context = this.$refs['lucentCanvas'].getContext("webgl");
+		mounted: function() {		
+			this.resize();
+			init.startWebGL(this.$refs['grapid-canvas']);
+			initShaders();
 		}
 })
 
-var app = new Vue({
-	el: "#app",
-	data: {
-		color: "",
-		hue : 200,
-		objArray: []
-	},
-	methods: {
-		updateColor: function(event) {
-			this.color = event.color
-			this.hue = event.hue
-		}, 
-		setFocus: function(event) {
-			this.objArray = sceneObjectModule.getObjArray();
-			this.select(event);
+	var grapidApp = new Vue({
+		el: "#grapid-app",
+		data: {
+			color: "",
+			hue : 200,
+			objArray: []
+		},
+		methods: {
+			updateColor: function(event) {
+				this.color = event.color
+				this.hue = event.hue
+			}
 		}
-	}
-})
+	})
+

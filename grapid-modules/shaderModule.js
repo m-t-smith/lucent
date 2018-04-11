@@ -1,26 +1,5 @@
 //Shader module 
 
-
-// object that holds functions that return shader code
-/* var shaderCreator = (function() {
-	
-	
-	
-	return {
-		"vShader" : {
-			"vGetScript" : function() {
-				getScript();
-			}
-		},
-		"fShader" : {
-			"fGetScript" : function () {
-				getScript();
-			}
-		}
-	};
-		
-		
-}()); */
 	
 	"use strict";
 
@@ -104,15 +83,6 @@ function getShader(gl, id) {
             return null;
         }
 
-        var str = "";
-        var k = shaderScript.firstChild;
-        while (k) {
-            if (k.nodeType == 3) {
-                str += k.textContent;
-            }
-            k = k.nextSibling;
-        }
-
         var shader;
         if (type === "fragment-shader") {
             shader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -163,5 +133,5 @@ function getShader(gl, id) {
         shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
     }
 	
-	initShaders();
+	
 

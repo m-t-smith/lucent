@@ -1,17 +1,18 @@
+<!-- Declare document type to be html5 -->
+<!DOCTYPE html>
 <html>
-  <head>
-		<!-- import vue.js and vuetify.js for reactive view objects and colorful buttons -->
+	<head>
+	<!-- Import vue.js and vuetify.js resources for reactive view components and pretty buttons  -->
+
 		<link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
 		<link href="https://unpkg.com/vuetify/dist/vuetify.min.css" rel="stylesheet">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
-		
-		<!-- import a library of webGL matrix transformations -->
-		<script src = "glMatrix-0.9.5.min.js"> </script>
-		
-		<!-- everything between the style tags is CSS describing the position and arrangment 
-		of DOM elements on the webpage and can safely be ignored -->
+
+<!-- Everything between the style tags is CSS defining the layout of the page
+based on the class attributes of the DOM element div tags below-->
+
 		<style>
 			div.container {
 				position: fixed;
@@ -55,109 +56,80 @@
 
 		</style>		
   </head>
-	
+	<!-- The body of an html file is where you set up all of the DOM elements we 
+	want in the webpage (e.g. an html5 canvas, buttons, custom vue components, etc.) -->
 	<body>
-	<!-- create a container element to hold our vue components -->
+	<!-- Div means division or section, think of div tags as labels on a building block 
+	(the blocks being our DOM elements) so first we create a division called container 
+	to hold all of our page elements -->
 		<div class = "container">
-		<!-- create a vue root element named app -->
-			<div id = "app">
-			<!-- create a vue instance of the color-picker component inside the root element html tag, making it a child component of app -->
-				<color-picker :change = "updateColor"></color-picker>
-				
-				<div id = "app2">
+				<!-- then we create a division with an id attribute = 'grapid-app', we use this id to link 
+				the elements in this section with the vue instance defined in canvasView.js -->
+				<div id = "grapid-app">
+				<!-- we initialize a custom vue instance, canvas-view, based on the vue 
+				component constructor defined in canvasView.js -->
+					<canvas-view></canvas-view>
+					<!-- we do the same for the color-picker and shape-adder components -->
+					<color-picker :change = "updateColor" :hue = "hue"></color-picker>
 					<shape-adder v-bind:hue = "hue"></shape-adder>
-					<canvas-view id = "vueCanvas"></canvas-view>
+					
 				</div>
-			</div>
-
-			<template id = "canvas-view-template">		
-				<div class = "canvas-el">
-					<canvas ref = "lucentCanvas" width = "800" height = "800" @click = "setFocus" ></canvas>
-				</div>
-			</template>
+				<!-- Vue components are made up of DOM elements, data, and functions; 
+				the html templates below describe the DOM elements that we include 
+				in a each component (e.g. the canvas-view component has a canvas element)  -->
+				<template id = "canvas-view-template">
+					<div class = "canvas-el">
+						<canvas ref = "grapid-canvas"></canvas>
+					</div>
+				</template>
 				
-			<template id= "color-picker-template">
-				<div class = "color-picker">
-					<div class="color-picker__inner">
-						<div class = "control" v-bind:style = "gradientH">
-							<input type = "range" min = "0" max = "360" v-model = "h"> </input>
+				<!-- credit to Florian Schulz for this color-picker template, 
+				see color-picker.js for link to his code -->
+				<template id= "color-picker-template">
+					<div class = "color-picker">
+						<div class="color-picker__inner">
+							<div class = "control" v-bind:style = "gradientH">
+								<input type = "range" min = "0" max = "360" v-model = "h"> </input>
+							</div>
+						</div>
+						<div class = "swatch" v-bind:style= "{'background': color}" v-on:click = "toggle">
 						</div>
 					</div>
-					<div class = "swatch" v-bind:style= "{'background': color}" v-on:click = "toggle">
-					</div>
-				</div>
-			</template>
-			
-			<template id= "shape-adder-template">
-				<div>
-					
-				<v-btn 
-					fab dark small color = "teal"
-					@click.native = "draw"
-				>
-					<v-icon dark>add</v-icon>
-				</v-btn>
-					
-				<select v-model="selected">
-					<option disabled value="">Shapes</option>
-					<option>triangle</option>
-					<option>square</option>
-					<option>circle</option>
-				</select>
-					
-				</div>
-			</template>
+				</template>
 				
-			<script>
-				Vue.component('shape-adder', {
-					template: "#shape-adder-template",
-					props: ["hue"],
-					data: function () {
-						return {
-							message: "Add a shape",
-							selected: ''
-						}
-					},
-					methods: {
-						draw: function (event) {
-							let options = {};
-							options.color = [];
-							let vColor = this.rgba;
-							
-							if (this.selected === "triangle"){
-								for (let i = 0; i < 3; i++) {
-									options.color = options.color.concat(vColor);
-								}
-							} else if (this.selected === "square"){
-								for (let i = 0; i < 4; i++) {
-									options.color = options.color.concat(vColor);
-								}
-							}
-							sceneObjectModule.createObject(this.selected, options);
-							sceneObjectModule.drawScene();
-						}
-					},
-					computed: {
-						rgba: function () {
-							let arr = utilityModule.hslToRgb(this.hue/360, 0.8, 0.8);
-							for(let i = 0; i < arr.length; i++){
-								arr[i] /= 255;
-							}
-							arr.push(1.0);
-							return arr;
-						}
-					}
-				})
-
-			</script>
-					
+				<template id= "shape-adder-template">
+					<div>
+					<!-- v-btn is a stylized button courtesy of vuetify.js;
+							in the element tag we set the color attribute to teal 
+							and bind the behavior on click events to the function 
+							"draw" defined in the shape-adder component constructor-->
+						<v-btn 
+							fab dark small color = "teal"
+							@click.native = "draw"
+						>
+							<v-icon dark>add</v-icon>
+						</v-btn>
+						
+						<select v-model="selected">
+						<option disabled value="">Shapes</option>
+						<option>triangle</option>
+						<option>square</option>
+						<option>circle</option>
+						</select>
+					</div>
+				</template>
+				
 		</div>
+		 <!-- We may at some point look into using Require.js or something to asynchonously load scripts while maintaining  -->
+		 <!-- the dependency chain at runtime but for now I'm just including them with script tags in the necessary order -->
 		 <!-- for why I'm including the scripts here, see https://www.html5rocks.com/en/tutorials/speed/script-loading/ -->
-			<script src = "color-picker.js"> </script>
-			<script src = "lucent.js"> </script>
-			<script src = "canvasView.js"></script>
-			<script src = "shaderModule.js"> </script>
-			<script src = "sceneObjects.js"> </script>
-			<script src = "utility.js"></script>
+			<script src = "grapid-views/shapeAdder.js"></script>
+			<script src = "glMatrix-0.9.5.min.js"> </script>
+			<script src = "grapid-modules/lucent.js"> </script>
+			<script src = "grapid-modules/utility.js"></script>
+			<script src = "grapid-modules/shaderModule.js"> </script>
+			<script src = "grapid-views/color-picker.js"> </script>	
+			<script src = "grapid-views/canvasView.js"></script>
+			<script src = "grapid-modules/sceneObjects.js"> </script>
 	</body>
 </html>

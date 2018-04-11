@@ -1,4 +1,6 @@
-//object color input view component
+// color input vue component modified (simplified) from 
+// work by Florian Schulz (@getflourish)
+// https://codepen.io/getflourish/pen/NbxByK
 
 Vue.component("color-picker", {
 	template: "#color-picker-template",
