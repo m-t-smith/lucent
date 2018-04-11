@@ -6,6 +6,7 @@ var gl;
 
 function initGL(canvas) {
 	try {
+		console.log(canvas);
 		gl = canvas.getContext("webgl");
 		gl.viewportWidth = canvas.width;
 		gl.viewportHeight = canvas.height;
@@ -18,8 +19,7 @@ function initGL(canvas) {
 	}
 }
 
-function webGLStart() {
-	var canvas = document.getElementById("glCanvas");
+function webGLStart(canvas) {
 	initGL(canvas);
 	
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -28,7 +28,7 @@ function webGLStart() {
 
 
 
-webGLStart();
+//webGLStart("vueCanvas");
 
-//document.write("hello, page");
+
 

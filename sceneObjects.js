@@ -127,9 +127,9 @@
 						}
 					}
 					
+					obj.index = objArray.length;
 					objArray.push(obj);
-					let index = objArray.length - 1;
-					initBuffers(index);
+					initBuffers(obj.index);
 					break;
 				}	
 				
@@ -217,6 +217,10 @@ function drawScene() {
 		
 		"createObject" : function(objClass, options) {
 			return createObject(objClass, options);
+		},
+		
+		"getObjArray" : function() {
+			return objArray;
 		}
 		
 	};

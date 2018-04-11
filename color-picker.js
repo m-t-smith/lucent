@@ -46,17 +46,3 @@ Vue.component("color-picker", {
 			this.h = parseInt(Math.random() * 360)
 		}
 })
-	
-	var app = new Vue({
-		el: "#app",
-		data: {
-			color: "",
-			hue : 200
-		},
-		methods: {
-			updateColor: function(event) {
-				this.color = event.color
-				this.hue = event.hue
-			}
-		}
-	})
