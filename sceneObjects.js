@@ -192,7 +192,6 @@ function drawScene() {
 					gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert); 
 					break;
 				case "square" :
-			
 					gl.drawArrays(gl.TRIANGLE_STRIP, 0, currObj.numVert);
 					break;
 				default : 

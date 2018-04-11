@@ -8,7 +8,8 @@ Vue.component("canvas-view", {
 			isVisible: true,
 			message: "",
 			height: 800,
-			width: 800
+			width: 800,
+			context: null
 		}
 	},
 	computed: {
