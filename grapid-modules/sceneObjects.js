@@ -29,6 +29,7 @@
 			"position" : [],
 			"color" : []
 		};
+		let recognized = true;
 		
 		createBuffers(obj);
 	
@@ -77,11 +78,7 @@
 						}
 					}
 					
-					objArray.push(obj);
-					let index = objArray.length - 1;
-					initBuffers(index);
 					break;
-					
 				}
 					
 				case "square" : {
@@ -127,14 +124,110 @@
 						}
 					}
 					
-					obj.index = objArray.length;
-					objArray.push(obj);
-					initBuffers(obj.index);
 					break;
 				}	
 				
-				default: console.log("createObject doesn't recognize input: " + objClass);
+				case "square-pyramid" : {
+					
+					obj.vertSize = 3;
+					obj.numVert = 12;
+					obj.colorSize = 4;
+					obj.numColor = 12;
 				
+					obj.properties.position = [
+								// Front face
+								 0.0,  1.0,  0.0,
+								-1.0, -1.0,  1.0,
+								 1.0, -1.0,  1.0,
+
+								// Right face
+								 0.0,  1.0,  0.0,
+								 1.0, -1.0,  1.0,
+								 1.0, -1.0, -1.0,
+
+								// Back face
+								 0.0,  1.0,  0.0,
+								 1.0, -1.0, -1.0,
+								-1.0, -1.0, -1.0,
+
+								// Left face
+								 0.0,  1.0,  0.0,
+								-1.0, -1.0, -1.0,
+								-1.0, -1.0,  1.0
+								];
+						
+					//check if there are parameters for size and color, if not, use default values
+					if (!options){  
+				
+						obj.place = [0.0, 0.0, -7.0]; 
+							
+						obj.properties.color = [
+									// Front face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 1.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+
+									// Right face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+									0.0, 1.0, 0.0, 1.0,
+
+									// Back face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 1.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+
+									// Left face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+									0.0, 1.0, 0.0, 1.0
+									];
+						
+					} else {
+					
+						if (options.place && options.color) {
+							obj.place = options.place;
+							obj.properties.color = options.color;
+						} else if (options.color) {
+							obj.place = [0.0, 0.0, -7.0];
+							obj.properties.color = options.color;
+						} else if(options.place){
+							obj.place = options.place;
+							obj.properties.color = [
+									// Front face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 1.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+
+									// Right face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+									0.0, 1.0, 0.0, 1.0,
+
+									// Back face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 1.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+
+									// Left face
+									1.0, 0.0, 0.0, 1.0,
+									0.0, 0.0, 1.0, 1.0,
+									0.0, 1.0, 0.0, 1.0
+							];
+						}
+					}
+					break;
+				}
+				
+				default: recognized = false;
+			}
+			
+			if(recognized){
+				obj.index = objArray.length;
+				objArray.push(obj);
+				initBuffers(obj.index);
+			} else {
+				console.log("createObject doesn't recognize input: " + objClass);
 			}
 	}
 
@@ -194,6 +287,8 @@ function drawScene() {
 				case "square" :
 					gl.drawArrays(gl.TRIANGLE_STRIP, 0, currObj.numVert);
 					break;
+				case "square-pyramid" :
+					gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert);
 				default : 
 					console.log("objectClass not recognized in drawScene");
 			}
