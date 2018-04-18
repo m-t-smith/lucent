@@ -49,7 +49,7 @@
 						1.0, -1.0,  0.0
 					];
 						
-					//check if there are parameters for size and color, if not, use default values
+					//check if there are parameters for place and color, if not, use default values
 					if (!options){  
 				
 						obj.place = [0.0, 0.0, -7.0]; 
