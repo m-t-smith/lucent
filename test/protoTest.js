@@ -9,7 +9,7 @@ function BaseObject(vertSize, numVert, colorSize, numColor, vertPosArr, vertColo
 
 BaseObject.prototype.setMatrixUniforms = function(pM, mvM) {
 	
-	console.log("Uniform matricies set");
+	console.log("Uniform matrices set");
 	
 	gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pM);
 	gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvM);

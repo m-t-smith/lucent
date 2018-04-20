@@ -1,0 +1,119 @@
+
+<html>
+
+<head>
+<title>This is a Chrome Tab &mdash; v1.0</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+
+<!- matrix transformations for rotation,translation, identiy matrix and such.
+	then theres a file with math functions such as degrees to radians.
+	and then finally there is a file that is google provided code that makes it so
+	that theres a browser independent way to recall a function,aka whenever screen
+	refreshes.->
+	
+	<script type="text/javascript" src="Util\math_based\glMatrix-0.9.5.min.js"></script>
+	<script type="text/javascript" src="Util\math_based\math_functions.js"></script>
+	<script type="text/javascript" src="Util\webgl-utils.js"></script>
+
+<!- shaderBased folder is for all shader based files.
+	objectBased folder is where predefined objects like cubes and pyramids will be
+	probably should use inheriance but idk how to do that in javascript.
+	finally Init folder is the files that run for the first them when the main html file is clicked->
+	
+	<script src = "Models\shader_based\shader.js"> </script>
+	
+
+	<script type="text/javascript" src="Models\object_based\baseobj.js"></script>
+		<script type="text/javascript" src="Models\object_based\line.js"></script>
+				<script type="text/javascript" src="Models\object_based\polygun.js"></script>
+	<script type="text/javascript" src="Models\object_based\base_object.js"></script>
+	<script type="text/javascript" src="Models\object_based\cube.js"></script>
+	<script type="text/javascript" src="Models\object_based\square_pyramid.js"></script>
+
+	
+
+	
+	<script type="text/javascript" src="Models\init\init_gl.js"></script>
+	<script type="text/javascript" src="Models\init\init_buffers.js"></script>
+
+<!- These files effect/affect the view portion of this program directly, viewMatrix is 
+	the matrix that basicly says where 'eye' is looking at.
+	calculation and draw file are both called right after eachother whenever the screen is ready
+	to be refreshed. aka at every tick the program calculates positions of objects and then draws them.
+	in the future these calculatiosn will be moved to the shaders as the gpu is much faster at mathz->
+	
+	<script type="text/javascript" src="View\view_matrix.js"></script>
+	<script type="text/javascript" src="Models\calculations\calculation.js"></script>
+	<script type="text/javascript" src="View\draw.js"></script>
+	
+
+
+<script type="text/javascript">
+
+   
+
+
+   
+
+
+
+
+
+
+	//a list of every single object that is getting render even if its off screen. Be hold its grandness.
+	var objectsToRender=[];
+	
+
+
+    
+
+
+
+
+
+
+   
+
+
+    function webGLStart() {
+		//@@@@@yes yes yes ik I should pass the canvas id in rather then hard coding it in
+		//but alas idk how to do that with html,plz halp .
+        var canvas = document.getElementById("lesson04-canvas");
+		
+		//inits the GL functions.
+        initGL(canvas);
+		
+		//inits shaders. shaders shade.
+        initShaders()
+		
+		//init buffers, aka create any objects that are going to be in the world at start.
+        initBuffers();
+
+		//make the background black.
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+		
+		//enable depth aka projective view.
+        gl.enable(gl.DEPTH_TEST);
+		
+		//the calculation-draw file caller, whenever the screen is 
+		//ready to refresh,this tick calls it.
+        tick();
+    }
+
+</script>
+
+
+</head>
+
+
+<body onload="webGLStart();">
+    
+	<!- @@@@@how can I have it where html gets the size of the window oh and the canvas id mentioned before ->
+    <canvas id="lesson04-canvas" style="border: none;" width="1920" height="1080"></canvas>
+
+    <br/>
+    
+</body>
+
+</html>

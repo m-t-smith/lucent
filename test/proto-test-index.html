@@ -35,7 +35,7 @@
 					   -1.0, -1.0,  0.0,
 						1.0, -1.0,  0.0
 					];
-			//color array with colums red, green, blue, alpha color components describing 1 vertex per row
+			//color array with columns red, green, blue, alpha color components describing 1 vertex per row
 			let vertColArr = [
 							0.0, 0.0, 1.0, 1.0,
 							0.0, 1.0, 0.0, 1.0,
@@ -66,7 +66,7 @@
 			//bind buffers set attributes
 			muhTriangle.bindBuffSetAttrib(tpb, tcb);
 			
-			//send model/view and perspective matricies to shaders with setMatrixUniforms
+			//send model/view and perspective matrices to shaders with setMatrixUniforms
 			muhTriangle.setMatrixUniforms(perspectiveMatrix, mvMatrix);
 			
 			//draw the things in the buffer
