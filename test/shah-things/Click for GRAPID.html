@@ -11,7 +11,7 @@
 	and then finally there is a file that is google provided code that makes it so
 	that theres a browser independent way to recall a function,aka whenever screen
 	refreshes.->
-	
+	<script type="text/javascript" src="Util\isArrayType.js"></script>
 	<script type="text/javascript" src="Util\math_based\glMatrix-0.9.5.min.js"></script>
 	<script type="text/javascript" src="Util\math_based\math_functions.js"></script>
 	<script type="text/javascript" src="Util\webgl-utils.js"></script>
@@ -25,9 +25,9 @@
 	
 
 	<script type="text/javascript" src="Models\object_based\baseobj.js"></script>
-		<script type="text/javascript" src="Models\object_based\line.js"></script>
-				<script type="text/javascript" src="Models\object_based\polygun.js"></script>
-	<script type="text/javascript" src="Models\object_based\base_object.js"></script>
+	<script type="text/javascript" src="Models\object_based\line.js"></script>
+	<script type="text/javascript" src="Models\object_based\polygun.js"></script>
+	
 	<script type="text/javascript" src="Models\object_based\cube.js"></script>
 	<script type="text/javascript" src="Models\object_based\square_pyramid.js"></script>
 
@@ -95,6 +95,8 @@
 		
 		//enable depth aka projective view.
         gl.enable(gl.DEPTH_TEST);
+		
+		
 		
 		//the calculation-draw file caller, whenever the screen is 
 		//ready to refresh,this tick calls it.

@@ -6,7 +6,7 @@
 				var pyramid;
 				var cube;
 			
-			//creates a empty object, for which then I can set properties and abuse the way
+			//creates an empty array object, for which I can set properties and abuse the way
 			//javascript just allows you to add fields to any object,
 			//because that totaly makes sense. Also note position buffer is later craeted
 				pyramid=[];
@@ -181,17 +181,10 @@
 				pyramidTest.setRotationDegree(0);
 				pyramidTest.setRotationSpeed(90);
 			
-			//	var testObj=new baseobject(1,2,3,4,5);
-				
-			//	testObj.rotationAxis=setRotationAxis(7+10);
-				
-			//	console.log(testObj.rotationAxis);
-			
-			var linerAlge=new line("dank","blue");
-			linerAlge.pirntAll();
-			
-			var linerAlge2=new	polygun("dank","blue");
-			linerAlge2.killAlllHumans(123);
+		
+			var testOb=new baseObj("dank",pyramid.position,pyramid.vertices,pyramid.colors,gl.TRIANGLES);
+			testOb.setDrawType(gl.TRIANGLES);
+		
 			//console.log(linerAlge.color+" -------"+linerAlge.name+" ------"+ linerAlge.rot);
 			
 			//adds them to the grand ole list of rendable objects
@@ -222,7 +215,7 @@
 				
 					if(!(initObj.vertexIndices===undefined))
 					{
-						
+						console.log("happens for square pyramid too");
 						gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, initObj.indexBuffer);
 					
 						gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(initObj.vertexIndices), gl.STATIC_DRAW);
