@@ -4,11 +4,12 @@
 	  <!-- basic.html -->
 	  <title>protoTest.html</title>
 	  <meta charset = "UTF-8" />
-	  
-	  <script src = "C:\Users\mtsmithe\source\repos\Team-Grapid\grapid-modules\shaderModule.js"></script>
-	  <script src = "C:\Users\mtsmithe\source\repos\Team-Grapid\grapid-modules\init.js"></script>
-	  <script src = "C:\Users\mtsmithe\source\repos\Team-Grapid\glMatrix-0.9.5.min.js"></script>
+
+	  <script src = "C:\Users\user\source\repos\Team-Grapid\grapid-modules\shaderModule.js"></script>
+	  <script src = "C:\Users\user\source\repos\Team-Grapid\grapid-modules\init.js"></script>
+	  <script src = "C:\Users\user\source\repos\Team-Grapid\glMatrix-0.9.5.min.js"></script>
 	  <script src = "protoTest.js"></script>
+    <!-- <script src = "./src/gl-matrix/mat4.js" type = "module"></script> -->
 
 	</head>
 		<body>
@@ -16,16 +17,17 @@
 		<canvas id="myCanvas" width="600" height="600"></canvas>
 
 			<script type= text/javascript>
-			
+      //import * as tmat4 from "./src/gl-matrix.js";
+
 			//create the canvas and set the context to webgl
 			let canvas = document.getElementById("myCanvas");
-			init.startWebGL(canvas); 
-			
+			init.startWebGL(canvas);
+
 			//initialize the webgl shaders
 			initShaders();
-			
+
 			//create buffers to feed vertex data to shaders
-			
+
 			let tpb = gl.createBuffer();
 			let tcb = gl.createBuffer();
 
@@ -41,37 +43,38 @@
 							0.0, 1.0, 0.0, 1.0,
 							1.0, 0.0, 0.0, 1.0
 							];
-			
+
 			let mvMatrix = mat4.create();
 			let perspectiveMatrix = mat4.create();
-			
-			
+
+
 			//-----------------End of variable declaration/initialization -----------
-			
+
 			gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
 
 			mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, perspectiveMatrix);
-			
+
 			mat4.identity(mvMatrix);
 			mat4.translate(mvMatrix, [0.0, 0.0, -7]);
-			
-			
-							
+      mat4.rotateY(mvMatrix, mvMatrix, 30);
+
+
+
 			//create object with constructor
-			let muhTriangle = new BaseObject(3, 3, 4, 3, vertPosArr, vertColArr);
-			
+			let muhTriangle = new BaseObject('t0', [0.0, 0.0, -7], vertPosArr, vertColArr, 'TRIANGLES', 3, 4);
+
 			//init buffers
 			muhTriangle.initBuffers(tpb, tcb, vertPosArr, vertColArr);
-			
+
 			//bind buffers set attributes
-			muhTriangle.bindBuffSetAttrib(tpb, tcb);
-			
-			//send model/view and perspective matrices to shaders with setMatrixUniforms
-			muhTriangle.setMatrixUniforms(perspectiveMatrix, mvMatrix);
-			
+			muhTriangle.setAttributes(tpb, tcb);
+
+			//send model/view and perspective matrices to shaders
+			muhTriangle.setUniforms(perspectiveMatrix, mvMatrix);
+
 			//draw the things in the buffer
-			gl.drawArrays(gl.TRIANGLES, 0, muhTriangle.nv); 
-			
+			gl.drawArrays(gl.TRIANGLES, 0, muhTriangle.numVert);
+
 			</script>
 
 		</body>
