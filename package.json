@@ -1,0 +1,25 @@
+{
+  "name": "grapid-app",
+  "version": "1.0.0",
+  "description": "webgl based graphic design app",
+  "main": "grapid-app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShahNafisRafique/Team-Grapid.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShahNafisRafique/Team-Grapid/issues"
+  },
+  "homepage": "https://github.com/ShahNafisRafique/Team-Grapid#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
