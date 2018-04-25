@@ -31,6 +31,7 @@ Vue.component('shape-adder', {
 								} else if (this.selected === "square"){
 									for (let i = 0; i < 4; i++) {
 										options.color = options.color.concat(vColor);
+										options.place = [-1, 0, -7]; 
 									}
 								} else if (this.selected === "square-pyramid"){
 									for (let i = 0; i < 12; i++) {
@@ -40,6 +41,7 @@ Vue.component('shape-adder', {
 										for (let i = 0; i < 24; i++) {
 										options.color = options.color.concat(vColor);
 									}
+									options.vertexIndices = [];
 								}
 								//draw calls the sceneObjectModule function createObject, which can currently accept up to two parameters; the class
 								//of the object to be created (selected), and a JavaScript object literal instance we assign to the variable 'options'
@@ -48,6 +50,7 @@ Vue.component('shape-adder', {
 								sceneObjectModule.createObject(this.selected, options);
 								//It then calls the drawScene function, which draws objects in the objArray to the canvas
 								sceneObjectModule.drawScene();
+								this.spin();
 							}
 						},
 						computed: {

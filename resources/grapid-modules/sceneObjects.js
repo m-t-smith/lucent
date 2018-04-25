@@ -29,6 +29,7 @@
 			"position" : [],
 			"color" : []
 		};
+		if(obj.objClass == "cube") obj.properties.indices = options.vertexIndices;
 		let recognized = true;
 		
 		createBuffers(obj);
@@ -219,6 +220,66 @@
 					break;
 				}
 				
+				case "cube" : {
+					
+					obj.vertSize = 3;
+					obj.colorSize = 4;
+					let position = [0.0, 0.0, -7.0];
+					let vertArray = [
+								// Front face
+								-1.0, -1.0,  1.0,
+								 1.0, -1.0,  1.0,
+								 1.0,  1.0,  1.0,
+								-1.0,  1.0,  1.0,
+
+								// Back face
+								-1.0, -1.0, -1.0,
+								-1.0,  1.0, -1.0,
+								 1.0,  1.0, -1.0,
+								 1.0, -1.0, -1.0,
+
+								// Top face
+								-1.0,  1.0, -1.0,
+								-1.0,  1.0,  1.0,
+								 1.0,  1.0,  1.0,
+								 1.0,  1.0, -1.0,
+
+								// Bottom face
+								-1.0, -1.0, -1.0,
+								 1.0, -1.0, -1.0,
+								 1.0, -1.0,  1.0,
+								-1.0, -1.0,  1.0,
+
+								// Right face
+								 1.0, -1.0, -1.0,
+								 1.0,  1.0, -1.0,
+								 1.0,  1.0,  1.0,
+								 1.0, -1.0,  1.0,
+
+								// Left face
+								-1.0, -1.0, -1.0,
+								-1.0, -1.0,  1.0,
+								-1.0,  1.0,  1.0,
+								-1.0,  1.0, -1.0
+								];
+						let vertexIndices = [
+											0, 1, 2,      0, 2, 3,    // Front face
+											4, 5, 6,      4, 6, 7,    // Back face
+											8, 9, 10,     8, 10, 11,  // Top face
+											12, 13, 14,   12, 14, 15, // Bottom face
+											16, 17, 18,   16, 18, 19, // Right face
+											20, 21, 22,   20, 22, 23  // Left face
+										];
+					
+					let cube = new Cube("cube", position, vertArray, options.color, gl.TRIANGLE_STRIP, vertexIndices);
+					obj.properties.position = cube.getVertices();
+					obj.properties.color = cube.getColor();
+					obj.properties.indices = cube.getVertexIndice();
+					obj.place = position;
+					
+					break;
+				}
+				
 				default: recognized = false;
 			}
 			
@@ -248,8 +309,15 @@ function initBuffers(index) {
 	bufferRef = currObj.objClass + "_color_buffer";
 	gl.bindBuffer(gl.ARRAY_BUFFER, objArray[bufferRef]);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(currObj.properties.color), gl.STATIC_DRAW);
+	
+	if(currObj.objClass == "cube") {
+		bufferRef = currObj.objClass + "_indices_buffer";
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, objArray[bufferRef]);
+		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(currObj.properties.indices), gl.STATIC_DRAW);
+	}
 
 }
+
 
 function drawScene() {
 		
@@ -267,6 +335,7 @@ function drawScene() {
 			
 			mat4.identity(modelViewMatrix);
 			mat4.translate(modelViewMatrix, modelViewMatrix, currObj.place);
+			mat4.rotateY(modelViewMatrix, modelViewMatrix, 30);
 			
 			let posBufferRef = currObj.objClass + "_position_buffer";
 			
@@ -278,10 +347,16 @@ function drawScene() {
 			gl.bindBuffer(gl.ARRAY_BUFFER, objArray[colBufferRef]);
 			gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, currObj.colorSize, gl.FLOAT, false, 0, 0);
 			
+			if(currObj.objClass == "cube"){
+				let indexBufferRef = "cube_indices_buffer";
+				console.log(objArray[indexBufferRef]);
+				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, objArray[indexBufferRef]);
+			}
+			
 			setMatrixUniforms(perspectiveMatrix, modelViewMatrix);
 		
 			switch (currObj.objClass) {
-				case "triangle" : 
+				case "triangle": 
           console.log(currObj.objClass);
           
          // let muhTriangle = new BaseObject('t0', currObj.place, currObj.properties.position, currObj.properties.color, 'TRIANGLES', 3, 4);
@@ -304,6 +379,11 @@ function drawScene() {
 					break;
 				case "square-pyramid" :
 					gl.drawArrays(gl.TRIANGLES, 0, currObj.numVert);
+					break;
+				case "cube" : 
+				//console.log(objArray["cube_indices_buffer"].length); --returns undefined 
+					gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+					break;
 				default : 
 					console.log("objectClass " + currObj.objClass + " not recognized in drawScene");
 			}
